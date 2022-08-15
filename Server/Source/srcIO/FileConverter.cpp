@@ -6,6 +6,8 @@
 
 #include "FileConverter.hpp"
 
+
+
 std::string FileConverter::getType(int type) {
     return types[type];
 }

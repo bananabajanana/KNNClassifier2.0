@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
         else {
             //cout << buffer;
         }
-        Flower unclassified = fc.updateFromBuffer(buffer);
+        Flower unclassified = fc.flowerFromLine(buffer);
         DistanceCalc* d = ((DistanceCalc *)new EuclideanDistance);
         machine.defFlower(unclassified,d);
         int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), read_bytes, 0);
