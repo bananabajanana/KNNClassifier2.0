@@ -2,9 +2,9 @@
 #define KNNCLASSIFIER_DISTANCESDATA_HPP
 
 #include "DistanceCalc.hpp"
-#include "source/srcDistances/srcDistanceCalculators/ChebyshevDistance.hpp"
-#include "source/srcDistances/srcDistanceCalculators/ManhattanDistance.hpp"
-#include "source/srcDistances/srcDistanceCalculators/EuclideanDistance.hpp"
+#include "Server/Source/srcDistances/srcDistanceCalculators/ChebyshevDistance.hpp"
+#include "Server/Source/srcDistances/srcDistanceCalculators/ManhattanDistance.hpp"
+#include "Server/Source/srcDistances/srcDistanceCalculators/EuclideanDistance.hpp"
 #include "vector"
 
 class DistancesData {

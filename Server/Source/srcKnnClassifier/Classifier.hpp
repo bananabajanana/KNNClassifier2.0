@@ -5,7 +5,6 @@
 #include <vector>
 #include <cmath>
 #include "Flower.hpp"
-#include "source/srcDistances/DistanceCalc.hpp"
 #include "Server/Source/srcDistances/DistanceCalc.hpp"
 
 #define MAX_NUM 1.7976931348623157E+308
