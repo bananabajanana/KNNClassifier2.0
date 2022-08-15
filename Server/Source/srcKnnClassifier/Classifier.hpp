@@ -6,6 +6,8 @@
 #include <cmath>
 #include "Flower.hpp"
 #include "source/srcDistances/DistanceCalc.hpp"
+#include "Server/Source/srcDistances/DistanceCalc.hpp"
+
 #define MAX_NUM 1.7976931348623157E+308
 
 /**
@@ -17,13 +19,6 @@ private:
     std::vector<Flower> classified;
 
     /**
-     * Define an undefined flower.
-     * @param f - The flower.
-     * @param typeDis - The distance method we are going to use.
-     */
-    void defFlower(Flower& f, DistanceCalc& typeDis) const;
-
-    /**
      * Helps the "defFlower" function algorithm finding the closest iris
      * and sending its place - while changing the distance to max value.
      * @param distances - vector of distances.
@@ -32,6 +27,13 @@ private:
     static int whereMinInArr(std::vector<double>& distances);
 
 public:
+    /**
+    * Define an undefined flower.
+    * @param f - The flower.
+    * @param typeDis - The distance method we are going to use.
+     */
+    void defFlower(Flower& f, DistanceCalc& typeDis) const;
+
     /**
      * Defines all the unclassified flowers.
      * @param unclassified - all the unclassified flowers.
