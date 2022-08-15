@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include "source/srcKnnClassifier/NPoint.hpp"
+#include "Server/Source/srcKnnClassifier/NPoint.hpp"
 
 class DistanceCalc {
 protected:

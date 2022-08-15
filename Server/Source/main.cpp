@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 
     FileConverter fc;
     std::vector<Flower> classified = fc.updateFromFile("../input/classified.csv");
-    int k = atoi(argv[0]);
+    int k = 5;
     Classifier machine(k, classified);
 
     //region Server Initialization
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         }
         Flower unclassified = fc.flowerFromLine(buffer);
         DistanceCalc* d = ((DistanceCalc *)new EuclideanDistance);
-        machine.defFlower(unclassified,d);
+        machine.defFlower(unclassified, *d);
         int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), read_bytes, 0);
 
         if (sent_bytes < 0) {
@@ -100,24 +100,24 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-int main(int argc, char* argv[]) {
-    //loading input files and k
-    FileConverter fc;
-    std::vector<Flower> classified = fc.updateFromFile("../input/classified.csv");
-    std::vector<Flower> unclassified = fc.updateFromFile("../input/Unclassified.csv");
-    int k = atoi(argv[0]);
-
-    Classifier machine(k, classified);
-    std::vector<DistanceCalc *> calculators = DistancesData::getAllTypes();
-
-    for (DistanceCalc* calculator : calculators) {
-        //classifying unclassified input
-        std::vector<Flower> output = unclassified;
-        machine.defFlowers(output, *calculator);
-        fc.setContent(output);
-
-        //outputting to relative
-        std::string path = calculator->fileName();
-        fc.updateToFile(path);
-    }
-}
+//int main(int argc, char* argv[]) {
+//    //loading input files and k
+//    FileConverter fc;
+//    std::vector<Flower> classified = fc.updateFromFile("../input/classified.csv");
+//    std::vector<Flower> unclassified = fc.updateFromFile("../input/Unclassified.csv");
+//    int k = atoi(argv[0]);
+//
+//    Classifier machine(k, classified);
+//    std::vector<DistanceCalc *> calculators = DistancesData::getAllTypes();
+//
+//    for (DistanceCalc* calculator : calculators) {
+//        //classifying unclassified input
+//        std::vector<Flower> output = unclassified;
+//        machine.defFlowers(output, *calculator);
+//        fc.setContent(output);
+//
+//        //outputting to relative
+//        std::string path = calculator->fileName();
+//        fc.updateToFile(path);
+//    }
+//}

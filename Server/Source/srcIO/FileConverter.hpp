@@ -8,13 +8,13 @@
 
 class FileConverter {
 private:
-    const std::string types[4] = { "Iris-versicolor", "Iris-virginica", "Iris-setosa", "!!Undefined!!"};
+    std::string types[4] = { "Iris-versicolor", "Iris-virginica", "Iris-setosa", "!!Undefined!!"};
     std::vector<Flower> content;
 
 
 public:
     Flower& flowerFromLine(char *st);
-    std::string getType(int type);
+    const char* getType(int type);
     /**
      * Returns the content of the given path in a Flower-Vector format.
      * Also stores the decoded vector in the object's "content" member.
