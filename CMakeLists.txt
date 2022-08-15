@@ -24,4 +24,4 @@ add_executable(KNNClassifier2.0
         Server/Source/srcKnnClassifier/Flower.hpp
         Server/Source/srcKnnClassifier/NPoint.cpp
         Server/Source/srcKnnClassifier/NPoint.hpp
-        Server/Source/main.cpp)
+        Server/Source/main.cpp Client/clientMain.cpp)
