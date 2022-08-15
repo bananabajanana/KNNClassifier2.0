@@ -19,12 +19,10 @@
 
 /*
  * TODO:
- *   -Write server-side and client-side main codes
- *   -Make new srcIO for server-side (instead of converting file, convert input from client)
- *   -Make the server-side return immediately the class after getting a flower
- *   -Make the client-side read the input file one at a time, and after sending each flower to the server write the returned class to the output
- *   -Update all file calls to updated places (post directory-reorganization)
- *   -Update CMakeLists to work with two executables (server-side and client-side)
+ *      -strtok kinda sus uwu
+ *      -reset buffer (\0) and add \n
+ *      -add time library and timeout functionality to server
+ *      -make sure all flower info was sent
  */
 
 /*
