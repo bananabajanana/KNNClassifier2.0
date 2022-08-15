@@ -1,10 +1,10 @@
 #include <vector>
 
-#include "source/srcKnnClassifier/Flower.hpp"
-#include "source/srcIO/FileConverter.hpp"
-#include "source/srcDistances/DistanceCalc.hpp"
-#include "source/srcKnnClassifier/Classifier.hpp"
-#include "source/srcDistances/DistancesData.hpp"
+#include "Server/Source/srcKnnClassifier/Flower.hpp"
+#include "Server/Source/srcIO/FileConverter.hpp"
+#include "Server/Source/srcDistances/DistanceCalc.hpp"
+#include "Server/Source/srcKnnClassifier/Classifier.hpp"
+#include "Server/Source/srcDistances/DistancesData.hpp"
 
 /*
  * TODO:
