@@ -11,8 +11,8 @@ using namespace std;
 
 int main() {
     //region FilesIOSetup
-    const string unclassifiedPath = "";
-    const string outputPath = "";
+    const string unclassifiedPath = "../Client/Data/Unclassified.csv";
+    const string outputPath = "../Client/Output/euclidean_output.csv";
 
     ifstream input(unclassifiedPath);
     ofstream output(outputPath);
