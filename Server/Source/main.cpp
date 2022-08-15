@@ -11,6 +11,7 @@
 #include "Server/Source/srcDistances/DistanceCalc.hpp"
 #include "Server/Source/srcKnnClassifier/Classifier.hpp"
 #include "Server/Source/srcDistances/DistancesData.hpp"
+#include "Server/Source/srcDistances/srcDistanceCalculators/EuclideanDistance.hpp"
 
 /*
  * TODO:
