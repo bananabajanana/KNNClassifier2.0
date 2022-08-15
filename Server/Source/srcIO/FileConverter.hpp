@@ -13,9 +13,7 @@ private:
     Flower& flowerFromLine(char *st);
 
 public:
-    std::string getType(int type) {
-        return types[type];
-    }
+    std::string getType(int type);
     /**
      * Returns the content of the given path in a Flower-Vector format.
      * Also stores the decoded vector in the object's "content" member.

@@ -6,6 +6,10 @@
 
 #include "FileConverter.hpp"
 
+std::string FileConverter::getType(int type) {
+    return types[type];
+}
+
 std::vector<Flower> &FileConverter::getContent() {
     return this->content;
 }
