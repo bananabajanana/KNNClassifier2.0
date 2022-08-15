@@ -12,7 +12,7 @@ std::vector<Flower> &FileConverter::getContent() {
 
 void FileConverter::setContent(const std::vector<Flower> &newContent) {
     // copies the given vector to current content vector.
-    content.clear();
+    content.cleartypes();
     for(const Flower& flower : newContent) {
         this->content.push_back(flower);
     }
