@@ -1,9 +1,15 @@
-#include <vector>
-#include <iostream>
+#ifdef WIN32
+#include <windows.h>
+#include <winsock.h>
+#else
 #include <sys/socket.h>
-#include <stdio.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
+
+#include <vector>
+#include <iostream>
+#include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include "Server/Source/srcKnnClassifier/Flower.hpp"
@@ -64,7 +70,7 @@ int main(int argc, char* argv[]) {
             perror("error listening to a socket");
         }
         struct sockaddr_in client_sin;
-        unsigned int addr_len = sizeof(client_sin);
+        int addr_len = sizeof(client_sin);
         int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
         if (client_sock < 0) {
             perror("error accepting client");
