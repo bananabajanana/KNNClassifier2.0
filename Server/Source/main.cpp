@@ -1,12 +1,10 @@
 #ifdef WIN32
 #include <windows.h>
-#include <winsock.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #endif
-
 #include <vector>
 #include <iostream>
 #include <stdio.h>
