@@ -1,11 +1,4 @@
-
 #include "Server/Source/srcKnnClassifier/ServerProcess.hpp"
-/*
- * TODO:
- *      -add time library and timeout functionality to server
- *      -make sure all flower info was sent
- *      -clean code and write readme
- */
 
 /*
  * Server-Client interaction diagram.
