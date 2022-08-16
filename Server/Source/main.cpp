@@ -43,12 +43,25 @@ void listenSoc(int sock) {
         perror("error listening to a socket");
     }
 }
-int acceptSoc(int sock, struct sockaddr_in client_sin, unsigned int addr_len) {
+int acceptSoc(int sock, struct sockaddr_in client_sin) {
+    unsigned int addr_len = sizeof(client_sin);
     int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
     if (client_sock < 0) {
         perror("error accepting client");
     }
     return client_sock;
+}
+bool getMessage(int client_sock, char buffer[]) {
+    int expected_data_len = sizeof(buffer);
+    int read_bytes = recv(client_sock, buffer, expected_data_len, 0);
+    if (read_bytes == 0) {
+        return false;
+        // connection is closed
+    } else if (read_bytes < 0) {
+        perror("There was a problem in recieving the information.");
+        // error
+    }
+    return true;
 }
 Flower defFlowerSoc(char* properties, Classifier machine,FileConverter fc) {
     Flower unclassified = fc.flowerFromLine(properties);
@@ -64,8 +77,8 @@ void sendSoc(Flower unclassified, FileConverter fc, int client_sock) {
         perror("error sending to client");
     }
 }
-int main(int argc, char* argv[]) {
 
+int main(int argc, char* argv[]) {
     FileConverter fc;
     std::vector<Flower> classified = fc.updateFromFile("../Server/Data/classified.csv");
     int k = 5;
@@ -85,33 +98,24 @@ int main(int argc, char* argv[]) {
     if (bind(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
         perror("error binding socket");
     }
+    // endregion
     while(true) {
         listenSoc(sock);
+
         struct sockaddr_in client_sin;
-        unsigned int addr_len = sizeof(client_sin);
-        int client_sock = acceptSoc(sock, client_sin, addr_len);
-        // endregion
+        int client_sock = acceptSoc(sock, client_sin);
+
         char buffer[4096] = { 0 };
-        int expected_data_len = sizeof(buffer);
         int read_bytes;
         do {
-            read_bytes = recv(client_sock, buffer, expected_data_len, 0);
-            if (read_bytes == 0) {
+            if(!getMessage(client_sock, buffer)) {
                 break;
-                // connection is closed
-            } else if (read_bytes < 0) {
-                perror("There was a problem in recieving the information.");
-                // error
             }
             Flower unclassified = defFlowerSoc(buffer, machine, fc);
             sendSoc(unclassified, fc, client_sock);
         } while (read_bytes != 0);
 
     }
-    close(sock);
-
-
-    return 0;
 }
 //int main(int argc, char* argv[]) {
 //    //loading input files and k
