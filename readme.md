@@ -129,7 +129,7 @@ graph TD;
 ```
 
 * <code>Listen</code>: The server waits for a user to connect.
-* <code>Accept</code>: The handshake process between the server and the client
+* <code>Accept</code>: The accept stage in the connection process.
 * <code>DataFromUser</code>: The server receives information about an unclassified flower from the user.
 * <code>OutputClass</code>: The server sends to the user the classification of the flower.
 * <code>UserDisconnects</code>: The current user disconnects, allowing the server to interact with a new user.
