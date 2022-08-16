@@ -116,7 +116,7 @@ class DistancesData {
 
 Finally, we created a Classifier class. This class identifies a given vector of flowers based on an input list of already identified Irises. This is implemented step-by-step according to the kNN algorithm, first finding the k closest neighbors to the unidentifiable flower, and then finding which category is most common among them.
 
-The with these implemented, the server runs indefinitely in the following loop:
+With these implemented, the server runs indefinitely in the following loop:
 
 ```mermaid
 graph TD;
