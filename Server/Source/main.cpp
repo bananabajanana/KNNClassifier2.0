@@ -46,6 +46,8 @@ int serverInitialization(const int server_port) {
         perror("error creating socket");
     }
     const int enable = 1;
+    //in TCP after closing the program the socket still remains in kernel bound to the port.
+    //to prevent failure of the bind() on restarting the program, mark the socket to reuse the address.
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
         perror("setsockopt(SO_REUSEADDR) failed");
     }
@@ -97,6 +99,8 @@ int main(int argc, char* argv[]) {
     listenSoc(listeningSock );
 
     int client_sock = -1;
+    //select() requires the size of the array of sockets to be passed as the maximum socket number plus one.
+    //see the man page of select.
     int maxFdsPlusOne = listeningSock + 1;
     int clientsNum = 0;
     fd_set rfds;
@@ -121,15 +125,19 @@ int main(int argc, char* argv[]) {
             }
             continue;
         }
+        //retval is positive number. that means that one of our sockets recived data or
+        //our listening socket recived a new connection that we need to accept.
         if(FD_ISSET(listeningSock,&rfds)) {
             // event on listening socket - accepting new clients
             struct sockaddr_in client_sin;
             client_sock = acceptSoc(listeningSock, client_sin);
             if(client_sock==-1) {
                 return -1;
+                //will sea will sea
             }
             clientsNum++;
             //maximum of all client_sockets +1
+            //we have only two sockets. we don't know what is the max because the kernel system do not promise numbers.
             maxFdsPlusOne = max(listeningSock, client_sock) + 1;
             FD_SET(client_sock, &rfds);
         }
