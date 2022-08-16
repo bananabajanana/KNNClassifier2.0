@@ -54,7 +54,7 @@ int main() {
             perror("Client Error: Couldn't sent bytes to server");
         }
 
-        char buffer[4096];
+        char buffer[4096] = { 0 };
         int expected_data_len = sizeof(buffer);
         int read_bytes = recv(sock, buffer, expected_data_len, 0);
         if (read_bytes == 0) {
@@ -64,7 +64,7 @@ int main() {
             perror("Client Error: Couldn't sent bytes to server");
         }
         else {
-            output << buffer;
+            output << buffer << endl;
         }
     }
 

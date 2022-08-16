@@ -37,7 +37,6 @@
  *             Flower object           and sends info to client
  */
 
-
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -66,14 +65,14 @@ int main(int argc, char* argv[]) {
             perror("error listening to a socket");
         }
         struct sockaddr_in client_sin;
-        int addr_len = sizeof(client_sin);
+        unsigned int addr_len = sizeof(client_sin);
         int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
         if (client_sock < 0) {
             perror("error accepting client");
         }
         // endregion
 
-        char buffer[4096];
+        char buffer[4096] = { 0 };
         int expected_data_len = sizeof(buffer);
         int read_bytes;
         do {
