@@ -25,7 +25,7 @@ add_executable(Server
         Server/Source/srcDistances/srcDistanceCalculators/EuclideanDistance.cpp
         Server/Source/srcDistances/srcDistanceCalculators/ChebyshevDistance.hpp
         Server/Source/srcDistances/srcDistanceCalculators/ChebyshevDistance.cpp
-)
+        Server/Source/srcKnnClassifier/ServerProcess.hpp Server/Source/srcKnnClassifier/ServerProcess.cpp)
 
 add_executable(Client
         Client/Client.cpp
