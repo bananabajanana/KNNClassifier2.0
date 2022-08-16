@@ -74,5 +74,7 @@ void ClientProcess::runClient() {
         output << buffer << std::endl;
     }
 
+    input.close();
+    output.close();
     close(sock);
 }
