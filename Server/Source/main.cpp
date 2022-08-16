@@ -18,7 +18,8 @@
 #include "Server/Source/srcKnnClassifier/Classifier.hpp"
 #include "Server/Source/srcDistances/DistancesData.hpp"
 #include "Server/Source/srcDistances/srcDistanceCalculators/EuclideanDistance.hpp"
-
+#define SERVER_PORT 6969
+#define CLIENT_TIME_OUT 15
 /*
  * TODO:
  *      -add time library and timeout functionality to server
@@ -92,21 +93,21 @@ int main(int argc, char* argv[]) {
     std::vector<Flower> classified = fc.updateFromFile("../Server/Data/classified.csv");
     Classifier machine(5, classified);
 
-    int listeningSock = serverInitialization(6969);
+    int listeningSock = serverInitialization(SERVER_PORT);
     listenSoc(listeningSock );
 
     int client_sock = -1;
-    int maxSocketsNum = 1;
+    int maxFdsPlusOne = listeningSock + 1;
     int clientsNum = 0;
     fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(listeningSock, &rfds);
     struct timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = CLIENT_TIME_OUT;
     tv.tv_usec = 0;
 
     while(true) {
-        int retval = select(maxSocketsNum, &rfds, NULL, NULL, &tv);
+        int retval = select(maxFdsPlusOne, &rfds, NULL, NULL, &tv);
         if(retval==-1) {
             //error the socket is not right
             perror("");
@@ -114,22 +115,22 @@ int main(int argc, char* argv[]) {
         }
         if(retval==0) {
             //there is time out
-            if(clientsNum==0) {
-                continue;
+            if(clientsNum!=0) {
+                close(client_sock);
+                close(listeningSock);
             }
-            close(client_sock);
-            close(listeningSock);
-            return 0;
+            continue;
         }
         if(FD_ISSET(listeningSock,&rfds)) {
-            // event on listening socket
+            // event on listening socket - accepting new clients
             struct sockaddr_in client_sin;
             client_sock = acceptSoc(listeningSock, client_sin);
             if(client_sock==-1) {
                 return -1;
             }
             clientsNum++;
-            maxSocketsNum++;
+            //maximum of all client_sockets +1
+            maxFdsPlusOne = max(listeningSock, client_sock) + 1;
             FD_SET(client_sock, &rfds);
         }
         else
@@ -148,7 +149,7 @@ int main(int argc, char* argv[]) {
                 int read_bytes = recv(client_sock, buffer, expected_data_len, 0);
                 if (read_bytes <= 0)
                 {
-                    maxSocketsNum--;
+                    maxFdsPlusOne = listeningSock + 1;
                     clientsNum--;
                     FD_CLR(client_sock,&rfds);
                     close(client_sock);
