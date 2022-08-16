@@ -9,7 +9,10 @@
 
 
 const char* FileConverter::getType(int type) {
-    return types[type].c_str();
+    std::string temp;
+    temp+=types[type];
+    temp += 3;
+    return temp.c_str();
 }
 
 std::vector<Flower> &FileConverter::getContent() {

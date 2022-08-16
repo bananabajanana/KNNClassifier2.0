@@ -63,6 +63,13 @@ int main() {
         else if (read_bytes < 0) {
             perror("Client Error: Couldn't sent bytes to server");
         }
+        else if(buffer[read_bytes-1]!=3) {
+            char* temp = buffer + read_bytes;
+            do {
+                int read_bytes = recv(sock, buffer, expected_data_len, 0);
+                temp = temp + read_bytes;
+            }while(temp[read_bytes]!=3);
+        }
         else {
             output << buffer << endl;
         }
