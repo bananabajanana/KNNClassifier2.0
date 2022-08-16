@@ -23,7 +23,7 @@ private:
     int port_no;
     int sock;
     std::string unclassifiedPath = "../Client/Data/Unclassified.csv";
-    std::string outputPath = "../Client/Output/euclidean_output.csv";
+    std::string outputPath = "../Client/Output/Classified.csv";
 
 
     void sendMessage(std::string message);

@@ -92,7 +92,7 @@ void sendSoc(Flower unclassified, FileConverter fc, int client_sock) {
 
 int main(int argc, char* argv[]) {
     FileConverter fc;
-    std::vector<Flower> classified = fc.updateFromFile("../Server/Data/classified.csv");
+    std::vector<Flower> classified = fc.updateFromFile("../Server/Data/TrainingData.csv");
     Classifier machine(5, classified);
 
     int listeningSock = serverInitialization(SERVER_PORT);
