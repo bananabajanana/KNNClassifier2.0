@@ -83,17 +83,12 @@ int main(int argc, char* argv[]) {
             } else if (read_bytes < 0) {
                 perror("There was a problem in recieving the information.");
                 // error
-            } else if(buffer[read_bytes-1]!=3) {
-                char* temp = buffer + read_bytes;
-                do {
-                    read_bytes = recv(client_sock, temp, expected_data_len, 0);
-                    temp = temp + read_bytes;
-                }while(temp[read_bytes]!=3);
             }
             Flower unclassified = fc.flowerFromLine(buffer);
             DistanceCalc *d = ((DistanceCalc *) new EuclideanDistance);
             machine.defFlower(unclassified, *d);
-            int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), read_bytes, 0);
+            int message_len = strlen(fc.getType(unclassified.getTypeOfIris()));
+            int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), message_len, 0);
 
             if (sent_bytes < 0) {
                 perror("error sending to client");
