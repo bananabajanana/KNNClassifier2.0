@@ -28,5 +28,5 @@ add_executable(Server
 )
 
 add_executable(Client
-        Client/clientMain.cpp
-)
+        Client/Client.cpp
+        Client/Client.hpp Client/clientMain.cpp)
