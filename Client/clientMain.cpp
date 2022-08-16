@@ -52,10 +52,17 @@ int connectToServer(const char* ip_address, const int port_no) {
     return sock;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     //region FilesIOSetup
-    const string unclassifiedPath = "../Client/Data/Unclassified.csv";
-    const string outputPath = "../Client/Output/euclidean_output.csv";
+    string unclassifiedPath;
+    string outputPath;
+    if (argc >= 2) {
+        unclassifiedPath = argv[0];
+        outputPath = argv[0];
+    } else {
+        unclassifiedPath  = "../Client/Data/Unclassified.csv";
+        outputPath  = "../Client/Output/euclidean_output.csv";
+    }
 
     ifstream input(unclassifiedPath);
     ofstream output(outputPath);
