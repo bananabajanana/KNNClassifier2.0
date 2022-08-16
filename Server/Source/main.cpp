@@ -1,9 +1,11 @@
 #ifdef WIN32
 #include <windows.h>
+#include <winsock.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
 #endif
 #include <vector>
 #include <iostream>
@@ -42,6 +44,10 @@ int serverInitialization(const int server_port) {
     if (sock < 0) {
         perror("error creating socket");
     }
+    const int enable = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
+        perror("setsockopt(SO_REUSEADDR) failed");
+    }
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
@@ -62,6 +68,7 @@ int acceptSoc(int sock, struct sockaddr_in client_sin) {
     int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
     if (client_sock < 0) {
         perror("error accepting client");
+
     }
     return client_sock;
 }
@@ -85,35 +92,76 @@ int main(int argc, char* argv[]) {
     std::vector<Flower> classified = fc.updateFromFile("../Server/Data/classified.csv");
     Classifier machine(5, classified);
 
-    int sock = serverInitialization(6969);
+    int listeningSock = serverInitialization(6969);
+    listenSoc(listeningSock );
+
+    int client_sock = -1;
+    int maxSocketsNum = 1;
+    int clientsNum = 0;
+    fd_set rfds;
+    FD_ZERO(&rfds);
+    FD_SET(listeningSock, &rfds);
+    struct timeval tv;
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
 
     while(true) {
-        listenSoc(sock);
-
-        struct sockaddr_in client_sin;
-        int client_sock = acceptSoc(sock, client_sin);
-        char buffer[4096];
-        int expected_data_len = sizeof(buffer);
-        int read_bytes = 1;
-        do {
-
-            //region Manual buffer memset because of bug
-            for(int i = 0; i < 20; i++) {
-                buffer[i] = '\0';
+        int retval = select(maxSocketsNum, &rfds, NULL, NULL, &tv);
+        if(retval==-1) {
+            //error the socket is not right
+            perror("");
+            return -1;
+        }
+        if(retval==0) {
+            //there is time out
+            if(clientsNum==0) {
+                continue;
             }
-            //endregion
-
-            int read_bytes = recv(client_sock, buffer, expected_data_len, 0);
-            if (read_bytes == 0) {
-                break;
-                // connection is closed
-            } else if (read_bytes < 0) {
-                perror("There was a problem in recieving the information.");
-                // error
+            close(client_sock);
+            close(listeningSock);
+            return 0;
+        }
+        if(FD_ISSET(listeningSock,&rfds)) {
+            // event on listening socket
+            struct sockaddr_in client_sin;
+            client_sock = acceptSoc(listeningSock, client_sin);
+            if(client_sock==-1) {
+                return -1;
             }
+            clientsNum++;
+            maxSocketsNum++;
+            FD_SET(client_sock, &rfds);
+        }
+        else
+        {
+            char buffer[4096];
+            int expected_data_len = sizeof(buffer);
+            int read_bytes = 1;
+            do
+            {
+                //region Manual buffer memset because of bug
+                for (int i = 0; i < 20; i++) {
+                    buffer[i] = '\0';
+                }
+                //endregion
 
-            Flower unclassified = defFlowerSoc(buffer, machine, fc);
-            sendSoc(unclassified, fc, client_sock);
-        } while (read_bytes != 0);
-    }
+                int read_bytes = recv(client_sock, buffer, expected_data_len, 0);
+                if (read_bytes <= 0)
+                {
+                    maxSocketsNum--;
+                    clientsNum--;
+                    FD_CLR(client_sock,&rfds);
+                    close(client_sock);
+                    if(read_bytes<0) {
+                        perror("recive returned -1");
+                    } else {
+                        cout<<"client closed connection.";
+                    }
+                    break;
+                }
+                Flower unclassified = defFlowerSoc(buffer, machine, fc);
+                sendSoc(unclassified, fc, client_sock);
+            }while (read_bytes != 0);
+        }//else
+    } // while(true)
 }
