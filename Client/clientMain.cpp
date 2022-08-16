@@ -14,18 +14,17 @@
 
 using namespace std;
 
-void sendMessage(string message, int sock) {
+void sendMessage(string message, const int sock) {
     char* toSend = const_cast<char *>(message.c_str());
     int message_len = strlen(toSend);
     int sent_bytes = send(sock, toSend, message_len, 0);
 
     if (sent_bytes < 0) {
-        perror("Client Error: Couldn't sent bytes to server");
+        perror("Client Error: Couldn't send bytes to server");
     }
 }
 
-void getMessage(int sock, char* buffer) {
-    int expected_data_len = sizeof(buffer);
+void getMessage(char* buffer, const int sock, int expected_data_len) {
     int read_bytes = recv(sock, buffer, expected_data_len, 0);
     if (read_bytes == 0) {
         perror("Client Error: Server closed the connection");
@@ -71,12 +70,19 @@ int main() {
     while(getline(input, flowerInfo)) {
         sendMessage(flowerInfo, sock);
 
-        char buffer[4096] = { 0 };
-        getMessage(sock, buffer);
+        char buffer[4096];
+        int expected_data_len = sizeof(buffer);
+
+        //region Manual buffer memset because of bug
+        for(int i = 0; i < 20; i++) {
+            buffer[i] = '\0';
+        }
+        //endregion
+
+        getMessage(buffer, sock, expected_data_len);
         output << buffer << endl;
     }
 
     close(sock);
-
 }
 
