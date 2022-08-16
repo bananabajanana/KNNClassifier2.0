@@ -48,6 +48,8 @@ int main(int argc, char* argv[]) {
 
     //region Server Initialization
     const int server_port = 6969;
+    fd_set fd;
+    timeval tv;
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("error creating socket");
@@ -60,41 +62,61 @@ int main(int argc, char* argv[]) {
     if (bind(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
         perror("error binding socket");
     }
-    while(true) {
-        if (listen(sock, 5) < 0) {
-            perror("error listening to a socket");
-        }
-        struct sockaddr_in client_sin;
-        unsigned int addr_len = sizeof(client_sin);
-        int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
-        if (client_sock < 0) {
-            perror("error accepting client");
-        }
-        // endregion
-
+    while(true)
+    {
+        FD_ZERO(&fd);
+        FD_SET(sock, &fd);
+        tv.tv_sec = 5;
+        tv.tv_usec = 0;
         char buffer[4096] = { 0 };
         int expected_data_len = sizeof(buffer);
         int read_bytes;
-        do {
-            read_bytes = recv(client_sock, buffer, expected_data_len, 0);
-            if (read_bytes == 0) {
-                break;
-                // connection is closed
-            } else if (read_bytes < 0) {
-                perror("There was a problem in recieving the information.");
-                // error
+        if (listen(sock, 5) < 0) {
+            perror("error listening to a socket");
+        }
+        // endregion
+        if (select(0, &fd, NULL, NULL, &tv) > 0) {
+            struct sockaddr_in client_sin;
+            unsigned int addr_len = sizeof(client_sin);
+            int client_sock = accept(sock, (struct sockaddr *) &client_sin, &addr_len);
+            if (client_sock < 0) {
+                perror("error accepting client");
             }
-            Flower unclassified = fc.flowerFromLine(buffer);
-            DistanceCalc *d = ((DistanceCalc *) new EuclideanDistance);
-            machine.defFlower(unclassified, *d);
-            int message_len = strlen(fc.getType(unclassified.getTypeOfIris()));
-            int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), message_len, 0);
+            long nbio = 1;
+            ::ioctlsocket(client_sock, FIONBIO, &nbio);
+            do {
+                read_bytes = recv(client_sock, buffer, expected_data_len, 0);
+                if (read_bytes == 0) {
+                    break;
+                    // connection is closed
+                } else if (read_bytes < 0) {
+                    //dealing with lost communication ?
+                    //and reastablishing communication
+                    //set timeout and reset on timeout error
+                    if (WSAGetLastError() == WSAEWOULDBLOCK)
+                    {
+                        FD_ZERO(&fd);
+                        FD_SET(client_sock, &fd);
+                        tv.tv_sec = 5;
+                        tv.tv_usec = 0;
+                        if (select(0, NULL, &fd, NULL, &tv) > 0)
+                            continue;
+                    }
+                    break;
+                    perror("There was a problem in recieving the information.");
+                    // error
+                }
+                Flower unclassified = fc.flowerFromLine(buffer);
+                DistanceCalc *d = ((DistanceCalc *) new EuclideanDistance);
+                machine.defFlower(unclassified, *d);
+                int message_len = strlen(fc.getType(unclassified.getTypeOfIris()));
+                int sent_bytes = send(client_sock, fc.getType(unclassified.getTypeOfIris()), message_len, 0);
 
-            if (sent_bytes < 0) {
-                perror("error sending to client");
-            }
-        } while (read_bytes != 0);
-
+                if (sent_bytes < 0) {
+                    perror("error sending to client");
+                }
+            } while (read_bytes != 0);
+        }
     }
     close(sock);
 
