@@ -9,7 +9,7 @@
 </ul>
 
 ----
-#### This project is written in <b>c++</b>, by <b>Ohad Heines</b> and <b>Michal Iakobashvili</b>
+#### This project is written in <b>c++</b>, by <b>Michal Iakobashvili</b> and <b>Ohad Heines</b> 
 
 ----
 
@@ -120,17 +120,30 @@ The with these implemented, the server runs indefinitely in the following loop:
 
 ```mermaid
 graph TD;
-    Listen-->DataFromUser;
+    Listen-->Accept;
+    Accept-->DataFromUser;
     DataFromUser-->OutputClass;
     OutputClass-->DataFromUser;
     OutputClass-->UserDisconnects;
-    UserDisconnects-->Listen
+    UserDisconnects-->Accept;
 ```
 
 * <code>Listen</code>: The server waits for a user to connect.
 * <code>DataFromUser</code>: The server receives information about an unclassified flower from the user.
 * <code>OutputClass</code>: The server sends to the user the classification of the flower.
 * <code>UserDisconnects</code>: The current user disconnects, allowing the server to interact with a new user.
+
+All the transitions are managed by a middle step we'll call <code>Select</code>. The <code>Select</code> is in charge of managing the following things:
+1. Gracefully closing the server in case of internal errors.
+2. Managing timeouts: if there is a non-active client - kick it, and in any case keep listening for further actions.
+3. If there are no connected clients, a client must be connecting, and we'll accept it.
+4. If there is an active client, we'll communicate with it through the server protocol.
+
+### Server Parameters
+
+* **Port = 6969** We chose this port number since it is not a commonly used port and is not part of the super-user port range (0-1024).
+* **Timeout = 5sec** We gave clients a generous amount of time before kicking them out.
+* **Buffer Size = 128** Since the user can only send one flower info at a time, we limited the user's message size to 128 bytes. 
 
 ### Client
 
@@ -159,6 +172,11 @@ graph TD;
 ----
 ## Acknowledgements
 
-For a better understanding of the algorithm we researched in [Wikipedia](https://www.wikipedia.org/), and used [Stack Overflow](https://stackoverflow.com/) to understand c++ syntax and debug more efficiently.
+For a better understanding of the algorithms, c++ language, and multiple dependencies, we used the following sites:
+* [Wikiedia](https://www.wikipedia.org/)
+* [Stack Overflow](https://stackoverflow.com/)
+* [Linux Documentation](https://linux.die.net/)
+* [Linux Manual](https://man7.org/linux/man-pages/man2/select.2.html)
+* [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
 [1]: https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
