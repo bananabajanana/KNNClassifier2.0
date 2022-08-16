@@ -30,36 +30,55 @@ $ git clone 'https://github.com/bananabajanana/KNNClassifier.git'
 ----
 
 ## Usage
-You can run the code with our default input files, or alternatively put in your own, in the <code>input</code> folder, and the output will be found in a similar <code>output</code> folder.
+You can run the code with our default input files, or alternatively put in your own.
+The server has it's training data in <code>TrainingData.csv</code>.
+In addition the client's input and output files can be given as arguments during compilation time, but it is recommended to put them as <code>Unclassified.csv</code> and <code>Classified.csv</code> folders as shown below.
 
 ```
 KNNClassifier
 │   ...
 │
-└───input
-│   │   classified.csv
-│   │   unclassified.csv
+└───Client
 │   │   ...
+│   │   
+│   └───Data
+│   │   │   Unclassified.csv
+│   │       
+│   └───Output
+│       │   Classified.csv
 │
-└───output
-│   │   chebyshev_output.csv
-│   │   euclidean_output.csv
-│   │   manhattan_output.csv
+└───Server
 │   │   ...
+│   │   
+│   └───Data
+│   │   │   TrainingData.csv
 ```
 
 <p>You can run the project using our provided <code>CMakeLists.txt</code> file:</p>
 
 ```console
 $ mkdir -p build && cd build
-$ cmake
-$ make -j && make KNNClassifier {K}
+$ cmake ..
+$ make -j && make Server && make Client {IPath} {OPath}
+$ ./Server
 ```
-<p>Replacing {k} with an integer of your choosing.</p>
+Where {IPath} should be replaced with the path to the input file to be classified, and {OPath} with the path to output the data to.
+It is also possible to keep not specify {IPath} and {OPath} arguments, which will cause the program to work with the default arguments specified above.
+
+After this, the compilation and linkage of the codes is complete and the Server is running.
+All that is left is to run the Client program from a different terminal, as following:
+
+```console
+$ cd {path}/build
+$ ./Client
+```
+Replacing {path} with the folder path to the project's repository on your personal computer.
 
 ----
 
 ## Implementation
+
+### Server
 We first created a Flower object, that will store a single flower's type and parameters. The flower's type is stored as an enum, with four options: the three possible types, and an undefined option.
 
 ```c++
@@ -97,16 +116,39 @@ class DistancesData {
 
 Finally, we created a Classifier class. This class identifies a given vector of flowers based on an input list of already identified Irises. This is implemented step-by-step according to the kNN algorithm, first finding the k closest neighbors to the unidentifiable flower, and then finding which category is most common among them.
 
-The output given by the classifier class is written to an output folder, in a .csv file with an appropriate name thanks to our FileConverter class, which manages this project's input-output. Currently, the file converting system is hyper-specific and not very flexible, but this should be a problem since the UI is bound to change drastically, so the current system is only temporary.
+The with these implemented, the server runs indefinitely in the following loop:
 
-```c++
-class FileConverter {
-public:
-    std::vector<Flower>& updateFromFile(std::string path);
-    void updateToFile(std::string path);
-    ...
-};
+```mermaid
+graph TD;
+    Listen-->DataFromUser;
+    DataFromUser-->OutputClass;
+    OutputClass-->DataFromUser;
+    OutputClass-->UserDisconnects;
+    UserDisconnects-->Listen
 ```
+
+* <code>Listen</code>: The server waits for a user to connect.
+* <code>DataFromUser</code>: The server receives information about an unclassified flower from the user.
+* <code>OutputClass</code>: The server sends to the user the classification of the flower.
+* <code>UserDisconnects</code>: The current user disconnects, allowing the server to interact with a new user.
+
+### Client
+
+The client is a sort of *simple demo* for interaction with the server. It takes an input file from the user, and sends the flower information - one by one - to the server, while outputting the given classifications to an output file.
+
+```mermaid
+graph TD;
+    ReadLine-.No lines left.->Exit;
+    ReadLine-->SendInfo;
+    SendInfo-->WriteLine;
+    WriteLine-->ReadLine;
+    
+```
+
+* <code>ReadLine</code>: The client program reads a line from the input file.
+* <code>SendInfo</code>: The client sends the flower info previously read to the server.
+* <code>WriteLine</code>: The client writes the given class to the output file.
+* <code>Exit</code>: If there are no lines left, the client closes its connection with the server.
 
 ----
 ## Authors
