@@ -3,6 +3,8 @@
 ClientProcess::ClientProcess(char *ip_address, int port_no) {
     this->ip_address = ip_address;
     this->port_no = port_no;
+    this->unclassifiedPath = "../Client/Data/Unclassified.csv";
+    this->outputPath = "../Client/Output/Classified.csv";
 }
 
 void ClientProcess::sendMessage(std::string message) {
@@ -43,29 +45,30 @@ int ClientProcess::connectToServer() {
     return sock;
 }
 
-void ClientProcess::setPaths(std::string unclassiiedPath, std::string outputPath) {
-    this->unclassifiedPath = unclassiiedPath;
+void ClientProcess::setPaths(std::string unclassifiedPath, std::string outputPath) {
+    this->unclassifiedPath = unclassifiedPath;
     this->outputPath = outputPath;
 }
 
 void ClientProcess::runClient() {
-    //region FilesIOSetup
+    //I/O setup
     std::ifstream input(unclassifiedPath);
     std::ofstream output(outputPath);
-
     std::string flowerInfo;
-    //endregion
 
+    //connecting to a server socket
     sock = connectToServer();
 
+    //for each line in the input file, we send it to the server and
+    //write the server's returning argument to a file.
     while(std::getline(input, flowerInfo)) {
         sendMessage(flowerInfo);
 
-        //region Manual buffer memset because of bug
+        //manually resetting the buffer to \0 between messages.
+        //could probably change to memset, but that caused problems in the past.
         for(int i = 0; i < 128; i++) {
             buffer[i] = '\0';
         }
-        //endregion
 
         getMessage();
         output << buffer << std::endl;
@@ -73,4 +76,3 @@ void ClientProcess::runClient() {
 
     close(sock);
 }
-
