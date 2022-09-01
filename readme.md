@@ -129,6 +129,7 @@ graph TD;
 ```
 
 * <code>Listen</code>: The server waits for a user to connect.
+* <code>Accept</code>: The accept stage in the connection process.
 * <code>DataFromUser</code>: The server receives information about an unclassified flower from the user.
 * <code>OutputClass</code>: The server sends to the user the classification of the flower.
 * <code>UserDisconnects</code>: The current user disconnects, allowing the server to interact with a new user.
@@ -141,7 +142,7 @@ All the transitions are managed by a middle step we'll call <code>Select</code>.
 
 ### Server Parameters
 
-* **Port = 6969** We chose this port number since it is not a commonly used port and is not part of the super-user port range (0-1024).
+* **Port = 6969** We chose this port number since it is not a commonly used port and is not part of the super-user port range (0-1024). [2]
 * **Timeout = 5sec** We gave clients a generous amount of time before kicking them out.
 * **Buffer Size = 128** Since the user can only send one flower info at a time, we limited the user's message size to 128 bytes. 
 
@@ -180,3 +181,4 @@ For a better understanding of the algorithms, c++ language, and multiple depende
 * [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
 [1]: https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
+[2]: https://en.wikipedia.org/wiki/69

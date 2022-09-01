@@ -1,10 +1,13 @@
 #include "Client.hpp"
+#define CLIENT_PORT 6969
+#define MY_IP "127.0.0.1"
+
 
 int main(int argc, char **argv) {
-    ClientProcess c("127.0.0.1", 6969);
+    ClientProcess c((char *)MY_IP, CLIENT_PORT);
 
-    if(argc >= 2) {
-        c.setPaths(argv[0], argv[1]);
+    if(argc >= 3) {
+        c.setPaths(argv[1], argv[2]);
     }
 
     c.runClient();

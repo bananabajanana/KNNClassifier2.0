@@ -22,16 +22,46 @@ private:
     int expected_data_len = 128;
     int port_no;
     int sock;
-    std::string unclassifiedPath = "../Client/Data/Unclassified.csv";
-    std::string outputPath = "../Client/Output/euclidean_output.csv";
+    std::string unclassifiedPath;
+    std::string outputPath;
 
 
+    /**
+     * Send a message to the server.
+     * @param message message to send to the server
+     */
     void sendMessage(std::string message);
+
+    /**
+     * Load a message from the server to the object's buffer array.
+     */
     void getMessage();
+
+    /**
+     * Connect to the server with the given port and ip from the initializer.
+     * @return socket number
+     */
     int connectToServer();
 public:
+    /**
+     * ClientProcess Initializer.
+     * @param ip_address server's IP address
+     * @param port_no server's port number
+     */
     ClientProcess(char* ip_address, int port_no);
-    void setPaths(std::string unclassiiedPath, std::string outputPath);
+
+    /**
+     * Overwrite the default input and output paths
+     * @param unclassifiedPath new input path
+     * @param outputPath new output path
+     */
+    void setPaths(std::string unclassifiedPath, std::string outputPath);
+
+    /**
+     * Runs a demo functionality of the client.
+     * This opens the input file, and feeds each flower information line from it to the server.
+     * Then, when receiving the flower's class, it writes it to an output file.
+     */
     void runClient();
 };
 
