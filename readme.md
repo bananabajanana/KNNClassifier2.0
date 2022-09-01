@@ -59,21 +59,21 @@ KNNClassifier
 ```console
 $ mkdir -p build && cd build
 $ cmake ..
-$ make -j && make Server && make Client {IPath} {OPath}
+$ make -j && make Server && make Client
 $ ./Server
 ```
-Where {IPath} should be replaced with the path to the input file to be classified, and {OPath} with the path to output the data to.
-It is also possible to keep not specify {IPath} and {OPath} arguments, which will cause the program to work with the default arguments specified above.
 
 After this, the compilation and linkage of the codes is complete and the Server is running.
 All that is left is to run the Client program from a different terminal, as following:
 
 ```console
 $ cd {path}/build
-$ ./Client
+$ ./Client {IPath} {OPath}
 ```
 Replacing {path} with the folder path to the project's repository on your personal computer.
 
+In addition,  {IPath} should be replaced with the path to the input file to be classified, and {OPath} with the path to output the data to.
+It is also possible to keep not specify {IPath} and {OPath} arguments, which will cause the program to work with the default arguments specified above.
 ----
 
 ## Implementation
